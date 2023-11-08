@@ -44,21 +44,23 @@ def new_controller():
     """
         Se crea una instancia del controlador
     """
-    #TODO: Llamar la función del controlador donde se crean las estructuras de datos
-    pass
+
+    control = controller.new_controller()
+   
+    return control   
 
 
 def print_menu():
     print("Bienvenido")
     print("1- Cargar información")
-    print("2- Ejecutar Requerimiento 1")
-    print("3- Ejecutar Requerimiento 2")
-    print("4- Ejecutar Requerimiento 3")
-    print("5- Ejecutar Requerimiento 4")
-    print("6- Ejecutar Requerimiento 5")
-    print("7- Ejecutar Requerimiento 6")
-    print("8- Ejecutar Requerimiento 7")
-    print("9- Ejecutar Requerimiento 8")
+    print("2- Conocer los eventos sismicos entre dos fechas")
+    print("3- Conocer los eventos sísmicos entre dos magnitudes")
+    print("4- Consultar los 10 eventos más recientes según una magnitud y profundidad indicadas")
+    print("5- Consultar los 15 eventos sísmicos más recientes según su significancia y una distancia azimutal ")
+    print("6- Consultar los 20 eventos más recientes para una profundidad dada y registrados por un cierto número de estaciones")
+    print("7- Reportar el evento más significativo y los N eventos más próximos cronológicamente ocurridos dentro del área alrededor de un punto")
+    print("8-Graficar un histograma anual de los eventos ocurridos según la región y propiedades de los eventos")
+    print("9- Visualizar los eventos sísmicos de cada requerimiento en un mapa interactivo ")
     print("0- Salir")
 
 
@@ -67,7 +69,7 @@ def load_data(control):
     Carga los datos
     """
     #TODO: Realizar la carga de datos
-    pass
+    return controller.load_data()
 
 
 def print_data(control, id):
