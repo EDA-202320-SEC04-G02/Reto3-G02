@@ -43,30 +43,47 @@ def new_controller():
 
 # Funciones para la carga de datos
 
-def load_data(control, tm):
+def load_data(control, tamaño):
     """
     Carga los datos del reto
     """
+    tamaño = int(tamaño)
+    tm = 'small'
+    if tamaño == 2:
+        tm = "5pct"
+    if tamaño == 3:
+        tm = "10pct"
+    if tamaño == 4:
+        tm = "20pct"
+    if tamaño == 5:
+        tm = "30pct"
+    if tamaño == 6:
+        tm = "50pct"
+    if tamaño == 7:
+        tm = "80pct"
+    if tamaño == 8:
+        tm = "large"
+    
     control["model"] = model.new_data_structs()
     sismo = control["model"]
-    load_date(sismo["anio"],tm)
-    primero_ultimos = model.primeros_ultimos_5(sismo["anio"])
+    load_date(sismo,tm)
+    primero_ultimos,size = model.primeros_ultimos_5(sismo["seg"])
     
-    return primero_ultimos
+    return primero_ultimos,size
 
 
 
 # Funciones de ordenamiento
 
 def load_date(sismo,tm):
-    tm = "small"
+    
     temblorefile = cf.data_dir + 'earthquakes/temblores-utf8-' + tm + '.csv'
     input_file = csv.DictReader(open(temblorefile, encoding='utf-8'))
     
     for data in input_file:
         
-        model.add_dates(sismo, data)
-        
+        model.add_seg(sismo["seg"],data)
+    
         
     return sismo
 
@@ -88,36 +105,52 @@ def get_data(control, id):
     pass
 
 
-def req_1(control):
+def req_1(control,inicial,final):
     """
     Retorna el resultado del requerimiento 1
     """
-    # TODO: Modificar el requerimiento 1
-    pass
+    sismo = control["model"]
+    datos = model.req_1(sismo["seg"],inicial,final)
+    
+    diff_dates,total_sis,datos_finales= model.tabulate_req_1(datos)
+    datos_finales = model.ultimos_primeros(datos_finales)
+    
+    
+    return diff_dates,total_sis,datos_finales
 
 
-def req_2(control):
+def req_2(control,inf,sup):
     """
     Retorna el resultado del requerimiento 2
     """
     # TODO: Modificar el requerimiento 2
-    pass
-
+    sismo = control["model"]
+    datos = model.req_2(sismo["seg"])
+    lista_final = model.tabulate_req_2(datos,inf,sup)
+    lista_final = model.ultimos_primeros(lista_final)
+    return lista_final
 
 def req_3(control):
     """
     Retorna el resultado del requerimiento 3
     """
     # TODO: Modificar el requerimiento 3
-    pass
+    
 
 
-def req_4(control):
+def req_4(control,sig,gap):
     """
     Retorna el resultado del requerimiento 4
     """
     # TODO: Modificar el requerimiento 4
-    pass
+    sismo = control["model"]
+    sig = int(sig)
+    gap = float(gap)
+    
+    total_dates, total_events,datos = model.req_4(sismo["seg"],sig,gap)
+    data_final = model.ultimos_primeros(datos)
+    
+    return total_dates, total_events,data_final
 
 
 def req_5(control):

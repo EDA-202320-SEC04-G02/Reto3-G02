@@ -84,7 +84,10 @@ def print_req_1(control):
         Función que imprime la solución del Requerimiento 1 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 1
-    pass
+    inicial = input("fecha inicial: ")
+    final = input("fecha final: ")
+    
+    return controller.req_1(control, inicial,final)
 
 
 def print_req_2(control):
@@ -92,7 +95,10 @@ def print_req_2(control):
         Función que imprime la solución del Requerimiento 2 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 2
-    pass
+    inf = input("El límite inferior de la magnitud: ")
+    sup = input("El límite superior de la magnitud: ")
+    
+    return controller.req_2(control,float(inf),float(sup))
 
 
 def print_req_3(control):
@@ -108,7 +114,9 @@ def print_req_4(control):
         Función que imprime la solución del Requerimiento 4 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 4
-    pass
+    sig = input("La significancia mínima del evento: ")
+    gap = input("La distancia azimutal máxima del evento: ")
+    return controller.req_4(control,sig,gap)
 
 
 def print_req_5(control):
@@ -168,19 +176,67 @@ if __name__ == "__main__":
             
             
             
-            data = load_data(control, tamaño)
+            data,size = load_data(control, tamaño)
+            print("Numero de sismos cargados: " + str(size))
             print(tabulate(lt.iterator(data),headers="keys", tablefmt="grid"))
+            
         elif int(inputs) == 2:
-            print_req_1(control)
+            diff_dates,total_sis,data = print_req_1(control)
+            listas = []
+            for datos in lt.iterator(data):
+                uno = lt.getElement(datos,1)
+                dos = lt.getElement(datos,2)
+                tres = lt.getElement(datos,3)
+                lista = []
+                lista.append(uno)
+                lista.append(dos)
+                lista.append(tres)
+                listas.append(lista)
+            print("Total different dates: " +str(diff_dates))
+            print("Total events between dates: " +str(total_sis))
+            keys = ["time","events","details"]
+            print(tabulate(listas,headers= keys ,tablefmt="grid"))
 
         elif int(inputs) == 3:
-            print_req_2(control)
+            
+            data = print_req_2(control)
+            listas = []
+            for datos in lt.iterator(data):
+                uno = lt.getElement(datos,1)
+                dos = lt.getElement(datos,2)
+                tres = lt.getElement(datos,3)
+                lista = []
+                lista.append(uno)
+                lista.append(dos)
+                lista.append(tres)
+                listas.append(lista)
+
+            keys = ["time","events","details"]
+            print(tabulate(listas,headers= keys ,tablefmt="grid"))
 
         elif int(inputs) == 4:
             print_req_3(control)
 
         elif int(inputs) == 5:
-            print_req_4(control)
+            total_dates, total_events,data = print_req_4(control)
+            listas = []
+            for datos in lt.iterator(data):
+                uno = lt.getElement(datos,1)
+                dos = lt.getElement(datos,2)
+                tres = lt.getElement(datos,3)
+                lista = []
+                lista.append(uno)
+                lista.append(dos)
+                lista.append(tres)
+                listas.append(lista)
+            print("Total different dates: " +str(diff_dates))
+            print("Total events between dates: " +str(total_events))
+            print("Selecting the first 15 results...")
+            print("Consult size: " +str(total_dates) + "The first and last 3 of the 15 results are:")
+            
+            
+            keys = ["time","events","details"]
+            print(tabulate(listas,headers= keys ,tablefmt="grid"))
 
         elif int(inputs) == 6:
             print_req_5(control)

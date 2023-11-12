@@ -40,6 +40,8 @@ from DISClib.Algorithms.Sorting import selectionsort as se
 from DISClib.Algorithms.Sorting import mergesort as merg
 from DISClib.Algorithms.Sorting import quicksort as quk
 import datetime
+from tabulate import tabulate
+
 
 assert cf
 
@@ -56,10 +58,11 @@ def new_data_structs():
     Inicializa las estructuras de datos del modelo. Las crea de
     manera vacía para posteriormente almacenar la información.
     """
-    sismo = { "anio" : None
+    sismo = { "seg" : None
 
     }
-    sismo["anio"] = om.newMap(omaptype="RBT"
+
+    sismo["seg"] = om.newMap(omaptype="RBT",cmpfunction=compareDates
                                       )
     return sismo
 #comparefunction=compareDates
@@ -72,8 +75,9 @@ def add_data(data_structs, data):
     #TODO: Crear la función para agregar elementos a una lista
     pass
 
-def add_dates(sismo,data):
-    fechasis = data["time"]
+
+def add_seg(sismo,data):
+    fechasis = data["time"]    
     
     if data.get("cdi")== "":
         cdi = "Unavailable"
@@ -95,6 +99,7 @@ def add_dates(sismo,data):
         gap = 0.00
     else:
         gap = data.get('gap')
+    
     dicc = {}
     dicc["time"] = data.get('time')
     dicc["mag"] = data.get('mag')
@@ -106,8 +111,6 @@ def add_dates(sismo,data):
     dicc["nst"] = nst
     dicc["title"] = data.get('title')
 
-
-    
     dicc["cdi"] = cdi
     dicc["mmi"] = mmi
     dicc["magType"] = data.get('magType')
@@ -117,14 +120,10 @@ def add_dates(sismo,data):
     dicc["code"] = data.get('code')
 
     
-    
-
-
-    
-    fecha = datetime.datetime.strptime(fechasis,"%Y-%m-%dT%H:%M:%S.%fZ")
+    fecha = datetime.datetime.strptime(fechasis,"%Y-%m-%dT%H:%M:%S.%fz")
+        
     om.put(sismo,fecha,dicc)
     return sismo
-    
 # Funciones para creacion de datos
 
 def new_data(id, info):
@@ -154,38 +153,146 @@ def data_size(data_structs):
 
 def primeros_ultimos_5(mapa):
     ultimo_elemento = om.size(mapa)
-    quintoo = ultimo_elemento-5
-    print(quintoo)
-    primero = om.select(mapa,1)
-    quinto = om.select(mapa,5)
+    
+    if ultimo_elemento < 7:
+        return om.valueSet(mapa),ultimo_elemento
+    
+    primero = om.select(mapa,0)
+    quinto = om.select(mapa,4)
     ultimo = om.select(mapa,ultimo_elemento-1)
     quintoultimo = om.select(mapa,ultimo_elemento-5)
     
-    print(primero,quinto)
-    print(quintoultimo,ultimo)
     primeros = om.values(mapa,primero,quinto)
     ultimos = om.values(mapa,quintoultimo,ultimo)
-    return crear_lista(ultimos,primeros)
+    return crear_lista(ultimos,primeros),ultimo_elemento
 
-def crear_lista(b,a):
-    for resultados in lt.iterator(a):
-         lt.addLast(b,resultados)
-    return b
+def crear_lista(a,b):
+    lt.exchange(a,1,3)
+    lt.exchange(b,1,3)
+    
+    for resultados in lt.iterator(b):
+         lt.addLast(a,resultados)
+    return a
 
-def req_1(data_structs):
+def lab_lista(lista_de_listas):
+    lista = lt.newList("ARRAY_LIST")
+    for cada_lista in lt.iterator(lista_de_listas):
+        lt.addLast(lista, lt.getElement(cada_lista,1))
+    return lista
+
+
+def lab_lista2(lista_de_listas):
+    lista = lt.newList("ARRAY_LIST")
+    for cada_lista in lt.iterator(lista_de_listas):
+        lt.addLast(lista,lt.getElement(cada_lista,1))
+        lt.addLast(lista,lt.getElement(cada_lista,2))
+        lt.addLast(lista,lt.getElement(cada_lista,3))
+    return lista
+
+def lab_lista_req1(lista_de_listas):
+    lista = lt.newList("ARRAY_LIST")
+    total_sis = 0
+    
+
+    for cada_lista in lt.iterator(lista_de_listas):
+        lista2 = lt.newList("ARRAY_LIST")
+        fecha = lt.getElement(cada_lista,1)["time"]
+        size = lt.size(cada_lista)
+        total_sis = size + total_sis
+        lt.addLast(lista2,fecha)
+        lt.addLast(lista2,size)
+        tabla = tabulate(lt.iterator(cada_lista),headers = "keys",tablefmt="grid")
+
+        lt.addLast(lista2, tabla)
+        lt.addLast(lista,lista2)
+    total_dates = lt.size(lista)
+
+    return total_dates,total_sis,lista
+def ultimos_primeros(data):
+    
+    if lt.size(data) < 6:
+        return data
+    else:
+        a = lt.size(data)-2
+        return crear_lista(lt.subList(data,a,3),lt.subList(data,1,3))
+
+def req_1(sismos,inicial,final):
     """
     Función que soluciona el requerimiento 1
     """
     # TODO: Realizar el requerimiento 1
-    pass
+    inicial = datetime.datetime.strptime(inicial,"%Y-%m-%dT%H:%M")
+    final = datetime.datetime.strptime(final,"%Y-%m-%dT%H:%M")
+    
+    valores = om.valueSet(sismos)
+    bst = om.newMap(omaptype="RBT",cmpfunction=compareDates)
+    for valor in lt.iterator(valores):
+          
+        lista = lt.newList("ARRAY_LIST")
+        
+        fecha = datetime.datetime.strptime(valor["time"][:-11],"%Y-%m-%dT%H:%M")
+        entry = om.get(bst,fecha)
+        if entry:
+            lista = me.getValue(entry)
+            lt.removeLast(lista)
+        if valor != None:
+            lt.addLast(lista,valor)
+        valor.pop("time")
+        lt.addLast(lista,fecha)
+        om.put(bst,fecha,lista)
+    
+    return om.values(bst,inicial,final)
 
 
-def req_2(data_structs):
+def req_2(sismo):
     """
     Función que soluciona el requerimiento 2
     """
     # TODO: Realizar el requerimiento 2
-    pass
+    valores = om.valueSet(sismo)
+
+    mag = om.newMap(omaptype="RBT",cmpfunction=compareMag)
+    for valor in lt.iterator(valores):
+        magnitud = float(valor["mag"])
+        fecha = valor["time"]
+        
+        llavevalor = om.get(mag,magnitud)
+        if llavevalor is None:
+                
+            mapa = om.newMap(omaptype="RBT",cmpfunction=compareDates2)
+                
+        else:
+
+            mapa = me.getValue(llavevalor)
+            
+        om.put(mapa,fecha,valor)  
+        om.put(mag,magnitud,mapa)
+
+    return mag
+def tabulate_req_2(bts,inf,sup):
+    inf = om.ceiling(bts,inf)
+    sup = om.floor(bts,sup)
+
+    filtrado = om.values(bts,inf,sup)
+
+    listas = lt.newList("ARRAY_LIST") 
+    for cada_mapa in lt.iterator(filtrado):
+        lista = lt.newList("ARRAY_LIST") 
+        vals = om.valueSet(cada_mapa)
+        events = lt.size(vals)
+        vals = ultimos_primeros(vals)
+    
+        tabla = tabulate(lt.iterator(vals),headers = "keys", tablefmt="grid")
+        
+        magnitud = lt.getElement(vals,1)["mag"]
+        
+        
+        lt.addLast(lista,magnitud)
+        lt.addLast(lista,events)
+        lt.addLast(lista,tabla)
+        lt.addLast(listas,lista)
+    return listas
+        
 
 
 def req_3(data_structs):
@@ -196,12 +303,87 @@ def req_3(data_structs):
     pass
 
 
-def req_4(data_structs):
+def req_4(sismo,sig,gap):
     """
     Función que soluciona el requerimiento 4
     """
     # TODO: Realizar el requerimiento 4
-    pass
+    valores = om.valueSet(sismo)
+    bst = om.newMap(omaptype="RBT",cmpfunction=compareDates2)
+    contador = 0
+    for valor in lt.iterator(valores):
+        
+        if int(valor["sig"])>=sig and float(valor["gap"])<=gap:
+            
+            contador =contador + 1
+            
+            lista = lt.newList("ARRAY_LIST")
+            
+            fecha = datetime.datetime.strptime(valor["time"][:-11],"%Y-%m-%dT%H:%M")
+            entry = om.get(bst,fecha)
+            if entry:
+                lista = me.getValue(entry)
+                lt.removeLast(lista)
+            if valor != None:
+                lt.addLast(lista,valor)
+            valor.pop("time")
+            lt.addLast(lista,fecha)
+            om.put(bst,fecha,lista)
+    
+    data = tabulate_req_4(bst,15)
+    
+    total_dates = om.size(bst)
+    total_events = contador
+    return total_dates, total_events,data
+            
+            
+        
+def tabulate_req_4(bst,num):
+    ini = om.select(bst,0)
+    ult = om.select(bst,num-1)
+    lista_de_listas = om.values(bst,ini,ult)
+    
+    lista = lt.newList("ARRAY_LIST")
+    
+
+    for cada_lista in lt.iterator(lista_de_listas):
+        lista2 = lt.newList("ARRAY_LIST")
+        fecha = lt.lastElement(cada_lista)
+        lt.removeLast(cada_lista)
+        size = lt.size(cada_lista)
+        
+        lt.addLast(lista2,fecha)
+        lt.addLast(lista2,size)
+        
+        tabla = tabulate(lt.iterator(cada_lista),headers = "keys",tablefmt="grid")
+
+        lt.addLast(lista2, tabla)
+        lt.addLast(lista,lista2)
+
+    return lista
+     
+    
+def tabulate_req_1(bst):
+    
+    lista = lt.newList("ARRAY_LIST")
+    
+    contador = 0
+    for cada_lista in lt.iterator(bst):
+        lista2 = lt.newList("ARRAY_LIST")
+        fecha = lt.lastElement(cada_lista)
+        lt.removeLast(cada_lista)
+        size = lt.size(cada_lista)
+        contador = contador + size
+        lt.addLast(lista2,fecha)
+        lt.addLast(lista2,size)
+        
+        tabla = tabulate(lt.iterator(cada_lista),headers = "keys",tablefmt="grid")
+
+        lt.addLast(lista2, tabla)
+        lt.addLast(lista,lista2)
+
+    return lt.size(bst),contador, lista
+    
 
 
 def req_5(data_structs):
@@ -280,3 +462,28 @@ def compareDates(date1, date2):
     else:
         return -1
 
+def compareMag(date1, date2):
+    """
+    Compara dos fechas
+    """
+    date1 = float(date1)
+    date2 = float(date2)
+    
+    
+    if (date1 == date2):
+        return 0
+    elif (date1 > date2):
+        return 1
+    else:
+        return -1
+    
+def compareDates2(date1, date2):
+    """
+    Compara dos fechas
+    """
+    if (date1 == date2):
+        return 0
+    elif (date1 < date2):
+        return 1
+    else:
+        return -1
