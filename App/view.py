@@ -64,12 +64,12 @@ def print_menu():
     print("0- Salir")
 
 
-def load_data(control):
+def load_data(control,tamaño):
     """
     Carga los datos
     """
     #TODO: Realizar la carga de datos
-    return controller.load_data()
+    return controller.load_data(control,tamaño)
 
 
 def print_data(control, id):
@@ -157,8 +157,19 @@ if __name__ == "__main__":
         print_menu()
         inputs = input('Seleccione una opción para continuar\n')
         if int(inputs) == 1:
+            
+            print("\nTamaño de los archivos: ")
+            print(" 1. small\n 2. 5pct\n 3. 10pct\n 4. 20pct\n 5. 30pct\n 6. 50pct\n 7. 80pct\n 8. large")
+    
+            tamaño = input("\nSeleccione el tamaño de los archivos: ")
+            
             print("Cargando información de los archivos ....\n")
-            data = load_data(control)
+            
+            
+            
+            
+            data = load_data(control, tamaño)
+            print(tabulate(lt.iterator(data),headers="keys", tablefmt="grid"))
         elif int(inputs) == 2:
             print_req_1(control)
 

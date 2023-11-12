@@ -39,6 +39,8 @@ from DISClib.Algorithms.Sorting import insertionsort as ins
 from DISClib.Algorithms.Sorting import selectionsort as se
 from DISClib.Algorithms.Sorting import mergesort as merg
 from DISClib.Algorithms.Sorting import quicksort as quk
+import datetime
+
 assert cf
 
 """
@@ -54,10 +56,13 @@ def new_data_structs():
     Inicializa las estructuras de datos del modelo. Las crea de
     manera vacía para posteriormente almacenar la información.
     """
-    #TODO: Inicializar las estructuras de datos
-    pass
+    sismo = { "anio" : None
 
-
+    }
+    sismo["anio"] = om.newMap(omaptype="RBT"
+                                      )
+    return sismo
+#comparefunction=compareDates
 # Funciones para agregar informacion al modelo
 
 def add_data(data_structs, data):
@@ -67,7 +72,59 @@ def add_data(data_structs, data):
     #TODO: Crear la función para agregar elementos a una lista
     pass
 
+def add_dates(sismo,data):
+    fechasis = data["time"]
+    
+    if data.get("cdi")== "":
+        cdi = "Unavailable"
+    else:
+        cdi = data.get('cdi')
+        
 
+    if data.get("mmi")== "":
+        mmi = "Unavailable"
+    else:
+        mmi = data.get('mmi')
+        
+    if data.get("nst")== "":
+        nst = 1
+    else:
+        nst = data.get('nst')
+        
+    if data.get("gap")== "":
+        gap = 0.00
+    else:
+        gap = data.get('gap')
+    dicc = {}
+    dicc["time"] = data.get('time')
+    dicc["mag"] = data.get('mag')
+    dicc["lat"] = data.get('lat')
+    dicc["long"] = data.get('long')
+    dicc["depth"] = data.get('depth')
+    dicc["sig"] = data.get('sig')
+    dicc["gap"] = gap
+    dicc["nst"] = nst
+    dicc["title"] = data.get('title')
+
+
+    
+    dicc["cdi"] = cdi
+    dicc["mmi"] = mmi
+    dicc["magType"] = data.get('magType')
+
+    dicc["type"] = data.get('type')
+
+    dicc["code"] = data.get('code')
+
+    
+    
+
+
+    
+    fecha = datetime.datetime.strptime(fechasis,"%Y-%m-%dT%H:%M:%S.%fZ")
+    om.put(sismo,fecha,dicc)
+    return sismo
+    
 # Funciones para creacion de datos
 
 def new_data(id, info):
@@ -95,6 +152,25 @@ def data_size(data_structs):
     #TODO: Crear la función para obtener el tamaño de una lista
     pass
 
+def primeros_ultimos_5(mapa):
+    ultimo_elemento = om.size(mapa)
+    quintoo = ultimo_elemento-5
+    print(quintoo)
+    primero = om.select(mapa,1)
+    quinto = om.select(mapa,5)
+    ultimo = om.select(mapa,ultimo_elemento-1)
+    quintoultimo = om.select(mapa,ultimo_elemento-5)
+    
+    print(primero,quinto)
+    print(quintoultimo,ultimo)
+    primeros = om.values(mapa,primero,quinto)
+    ultimos = om.values(mapa,quintoultimo,ultimo)
+    return crear_lista(ultimos,primeros)
+
+def crear_lista(b,a):
+    for resultados in lt.iterator(a):
+         lt.addLast(b,resultados)
+    return b
 
 def req_1(data_structs):
     """
@@ -192,3 +268,15 @@ def sort(data_structs):
     """
     #TODO: Crear función de ordenamiento
     pass
+
+def compareDates(date1, date2):
+    """
+    Compara dos fechas
+    """
+    if (date1 == date2):
+        return 0
+    elif (date1 > date2):
+        return 1
+    else:
+        return -1
+

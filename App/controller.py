@@ -43,15 +43,32 @@ def new_controller():
 
 # Funciones para la carga de datos
 
-def load_data(control, filename):
+def load_data(control, tm):
     """
     Carga los datos del reto
     """
-    # TODO: Realizar la carga de datos
-    pass
+    control["model"] = model.new_data_structs()
+    sismo = control["model"]
+    load_date(sismo["anio"],tm)
+    primero_ultimos = model.primeros_ultimos_5(sismo["anio"])
+    
+    return primero_ultimos
+
 
 
 # Funciones de ordenamiento
+
+def load_date(sismo,tm):
+    tm = "small"
+    temblorefile = cf.data_dir + 'earthquakes/temblores-utf8-' + tm + '.csv'
+    input_file = csv.DictReader(open(temblorefile, encoding='utf-8'))
+    
+    for data in input_file:
+        
+        model.add_dates(sismo, data)
+        
+        
+    return sismo
 
 def sort(control):
     """
