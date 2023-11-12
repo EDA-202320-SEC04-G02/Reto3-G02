@@ -34,7 +34,7 @@ The students edit this section to add their names, Uniandes emails, and specify 
 
 1. Student No. 1 Mateo Quiroga, 202224583, m.quiroga.c@uniandes.edu.co.
 1. Student No. 2 Hernando Diaz, 202220213, h.diazb@uniandes.edu.co.
-1. Student No. 3 Felipe Gonzalez Perez, ,jf.gonzalezp1@uniandes.edu.co.
+1. Student No. 3 Felipe Gonzalez, 202111623,jf.gonzalezp1@uniandes.edu.co.
 
 [Back to top](#challenge-template)
 
