@@ -199,7 +199,7 @@ if __name__ == "__main__":
 
         elif int(inputs) == 3:
             
-            data = print_req_2(control)
+            total_mag, total_events,consult_size,data = print_req_2(control)
             listas = []
             for datos in lt.iterator(data):
                 uno = lt.getElement(datos,1)
@@ -210,7 +210,11 @@ if __name__ == "__main__":
                 lista.append(dos)
                 lista.append(tres)
                 listas.append(lista)
-
+            print("Total different dates: " +str(total_mag))
+            print("Total events between dates: " +str(total_events))
+            print("Consult has " + str(total_mag) + " results")
+            print("Consult size: " +str(consult_size) + "Only the first and last 3 results are:")
+            
             keys = ["time","events","details"]
             print(tabulate(listas,headers= keys ,tablefmt="grid"))
 
@@ -229,7 +233,7 @@ if __name__ == "__main__":
                 lista.append(dos)
                 lista.append(tres)
                 listas.append(lista)
-            print("Total different dates: " +str(diff_dates))
+            print("Total different dates: " +str(total_dates))
             print("Total events between dates: " +str(total_events))
             print("Selecting the first 15 results...")
             print("Consult size: " +str(total_dates) + "The first and last 3 of the 15 results are:")

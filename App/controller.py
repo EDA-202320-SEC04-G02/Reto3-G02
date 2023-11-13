@@ -125,10 +125,13 @@ def req_2(control,inf,sup):
     """
     # TODO: Modificar el requerimiento 2
     sismo = control["model"]
-    datos = model.req_2(sismo["seg"])
-    lista_final = model.tabulate_req_2(datos,inf,sup)
+    consult_size,datos = model.req_2(sismo["seg"])
+    total_mag,total_events, lista_final = model.tabulate_req_2(datos,inf,sup)
     lista_final = model.ultimos_primeros(lista_final)
-    return lista_final
+    
+    print(total_mag, total_events,consult_size)
+    input()
+    return total_mag, total_events,consult_size,lista_final
 
 def req_3(control):
     """
@@ -148,9 +151,9 @@ def req_4(control,sig,gap):
     gap = float(gap)
     
     total_dates, total_events,datos = model.req_4(sismo["seg"],sig,gap)
-    data_final = model.ultimos_primeros(datos)
+    datos = model.ultimos_primeros(datos)
     
-    return total_dates, total_events,data_final
+    return total_dates, total_events,datos
 
 
 def req_5(control):
