@@ -248,7 +248,7 @@ if __name__ == "__main__":
             print_req_3(control)
 
         elif int(inputs) == 5:
-            total_dates, total_events,data = print_req_4(control)
+            total_dates, total_events,data,delta = print_req_4(control)
             listas = []
             for datos in lt.iterator(data):
                 uno = lt.getElement(datos,1)
@@ -261,6 +261,7 @@ if __name__ == "__main__":
                 listas.append(lista)
             
             print("\n=============== Req No. 4 Results ===============")
+            print(f"Se tardo: {delta}ms ")
             print("Total different dates: " +str(total_dates))
             print("Total events between dates: " +str(total_events))
             print("Selecting the first 15 results...")
@@ -271,7 +272,7 @@ if __name__ == "__main__":
             print(tabulate(listas,headers= keys ,tablefmt="grid"))
 
         elif int(inputs) == 6:
-            total_dates, total_events, data = print_req_5(control)
+            total_dates, total_events, data,delta = print_req_5(control)
             listas = []
             for datos in lt.iterator(data):
                 uno = lt.getElement(datos,1)
@@ -284,6 +285,7 @@ if __name__ == "__main__":
                 listas.append(lista)
             
             print("\n=============== Req No. 5 Results ===============")
+            print(f"Se tardo: {delta}ms ")
             print(f"Total different dates: '{str(total_dates)}'")
             print(f"Total events between dates: '{str(total_events)}'")
             print("Selecting the first 20 results...\n")

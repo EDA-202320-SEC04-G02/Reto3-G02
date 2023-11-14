@@ -381,7 +381,7 @@ def req_4(sismo,sig,gap):
     for valor in lt.iterator(valores):
         
         if int(valor["sig"])>=sig and float(valor["gap"])<=gap and valor != None:
-                        
+            copia = valor.copy()   
             contador =contador + 1
             
             lista = lt.newList("ARRAY_LIST")
@@ -392,22 +392,26 @@ def req_4(sismo,sig,gap):
                 lista = me.getValue(entry)
                 lt.removeLast(lista)
             if valor != None:
-                lt.addLast(lista,valor)
-            valor.pop("time")
+                lt.addLast(lista,copia)
+            copia.pop("time")
             lt.addLast(lista,fecha)
             om.put(bst,fecha,lista)
     num = om.size(bst)
-    data = tabulate_req_4(bst,num)
+    
+    
+    num = om.size(bst)
+    ini = om.select(bst,num-15)
+    ult = om.select(bst,num-1)
+    
+    lista_de_listas = om.values(bst,ini,ult)
     
     total_dates = om.size(bst)
     total_events = contador
-    return total_dates, total_events,data
+    return total_dates, total_events,lista_de_listas
 
 
-def tabulate_req_4(bst,num):
-    ini = om.select(bst,num-15)
-    ult = om.select(bst,num-1)
-    lista_de_listas = om.values(bst,ini,ult)
+def tabulate_req_4(lista_de_listas):
+    
     
     lista = lt.newList("ARRAY_LIST")
     
@@ -439,8 +443,8 @@ def req_5(sismo, depth, nst):
     contador = 0
     for valor in lt.iterator(valores):
         
-        if float(valor["depth"])>=depth and float(valor["nst"])>nst and valor != None:
-                        
+        if float(valor["depth"])>=depth and float(valor["nst"])>=nst and valor != None:
+            copia = valor.copy()    
             contador =contador + 1
             
             lista = lt.newList("ARRAY_LIST")
@@ -450,9 +454,9 @@ def req_5(sismo, depth, nst):
             if entry:
                 lista = me.getValue(entry)
                 lt.removeLast(lista)
-            if valor != None:
-                lt.addLast(lista,valor)
-            valor.pop("time")
+            if copia != None:
+                lt.addLast(lista,copia)
+            copia.pop("time")
             lt.addLast(lista,fecha)
             om.put(bst,fecha,lista)
     num = om.size(bst)
@@ -463,7 +467,7 @@ def req_5(sismo, depth, nst):
 
 
 def tabulate_req_5(bst,num):
-    ini = om.select(bst,num-20)
+    ini = om.select(bst,num-19)
     ult = om.select(bst,num-1)
     lista_de_listas = om.values(bst,ini,ult)
     

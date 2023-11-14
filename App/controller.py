@@ -152,14 +152,18 @@ def req_4(control,sig,gap):
     Retorna el resultado del requerimiento 4
     """
     # TODO: Modificar el requerimiento 4
+    inicial = get_time()
+    
     sismo = control["model"]
     sig = int(sig)
     gap = float(gap)
-    
     total_dates, total_events,datos = model.req_4(sismo["seg"],sig,gap)
-    datos = model.ultimos_primeros(datos)
     
-    return total_dates, total_events,datos
+    datos = model.tabulate_req_4(datos)
+    datos = model.ultimos_primeros(datos)
+    final = get_time()
+    delta = delta_time(inicial,final)
+    return total_dates, total_events,datos,delta
 
 
 def req_5(control, depth, nst):
@@ -167,14 +171,18 @@ def req_5(control, depth, nst):
     Retorna el resultado del requerimiento 4
     """
     # TODO: Modificar el requerimiento 4
+    
+    inicial = get_time()
     sismo = control["model"]
     depth = float(depth)
     nst = int(nst)
     
     total_dates, total_events,datos = model.req_5(sismo["seg"], depth, nst)
+    final = get_time()
+    delta = delta_time(inicial,final)
     datos = model.ultimos_primeros(datos)
     
-    return total_dates, total_events,datos
+    return total_dates, total_events,datos,delta
 
 def req_6(control):
     """
