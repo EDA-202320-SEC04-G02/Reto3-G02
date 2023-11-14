@@ -244,6 +244,26 @@ def req_1(sismos,inicial,final):
     
     return om.values(bst,inicial,final)
 
+def tabulate_req_1(bst):
+    
+    lista = lt.newList("ARRAY_LIST")
+    
+    contador = 0
+    for cada_lista in lt.iterator(bst):
+        lista2 = lt.newList("ARRAY_LIST")
+        fecha = lt.lastElement(cada_lista)
+        lt.removeLast(cada_lista)
+        size = lt.size(cada_lista)
+        contador = contador + size
+        lt.addLast(lista2,fecha)
+        lt.addLast(lista2,size)
+        
+        tabla = tabulate(lt.iterator(cada_lista),headers = "keys",tablefmt="grid")
+
+        lt.addLast(lista2, tabla)
+        lt.addLast(lista,lista2)
+
+    return lt.size(bst),contador, lista 
 
 def req_2(sismo):
     """
@@ -364,17 +384,58 @@ def tabulate_req_4(bst,num):
     return lista
      
     
-def tabulate_req_1(bst):
+
+    
+
+
+def req_5(sismo, depth, nst):
+    """
+    Función que soluciona el requerimiento 4
+    """
+    # TODO: Realizar el requerimiento 4
+    valores = om.valueSet(sismo)
+    bst = om.newMap(omaptype="RBT",cmpfunction=compareDates)
+    contador = 0
+    for valor in lt.iterator(valores):
+        
+        if float(valor["depth"])>=depth and float(valor["nst"])>nst and valor != None:
+                        
+            contador =contador + 1
+            
+            lista = lt.newList("ARRAY_LIST")
+            
+            fecha = datetime.datetime.strptime(valor["time"][:-11],"%Y-%m-%dT%H:%M")
+            entry = om.get(bst,fecha)
+            if entry:
+                lista = me.getValue(entry)
+                lt.removeLast(lista)
+            if valor != None:
+                lt.addLast(lista,valor)
+            valor.pop("time")
+            lt.addLast(lista,fecha)
+            om.put(bst,fecha,lista)
+    num = om.size(bst)
+    data = tabulate_req_5(bst,num)
+    total_dates = om.size(bst)
+    total_events = contador
+    return total_dates, total_events,data
+
+
+
+def tabulate_req_5(bst,num):
+    ini = om.select(bst,num-20)
+    ult = om.select(bst,num-1)
+    lista_de_listas = om.values(bst,ini,ult)
     
     lista = lt.newList("ARRAY_LIST")
     
-    contador = 0
-    for cada_lista in lt.iterator(bst):
+
+    for cada_lista in lt.iterator(lista_de_listas):
         lista2 = lt.newList("ARRAY_LIST")
         fecha = lt.lastElement(cada_lista)
         lt.removeLast(cada_lista)
         size = lt.size(cada_lista)
-        contador = contador + size
+        
         lt.addLast(lista2,fecha)
         lt.addLast(lista2,size)
         
@@ -383,17 +444,9 @@ def tabulate_req_1(bst):
         lt.addLast(lista2, tabla)
         lt.addLast(lista,lista2)
 
-    return lt.size(bst),contador, lista
-    
-
-
-def req_5(data_structs):
-    """
-    Función que soluciona el requerimiento 5
-    """
-    # TODO: Realizar el requerimiento 5
-    pass
-
+    return lista
+            
+            
 
 def req_6(data_structs):
     """

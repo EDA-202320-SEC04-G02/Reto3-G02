@@ -156,12 +156,19 @@ def req_4(control,sig,gap):
     return total_dates, total_events,datos
 
 
-def req_5(control):
+def req_5(control, depth, nst):
     """
-    Retorna el resultado del requerimiento 5
+    Retorna el resultado del requerimiento 4
     """
-    # TODO: Modificar el requerimiento 5
-    pass
+    # TODO: Modificar el requerimiento 4
+    sismo = control["model"]
+    depth = float(depth)
+    nst = int(nst)
+    
+    total_dates, total_events,datos = model.req_5(sismo["seg"], depth, nst)
+    datos = model.ultimos_primeros(datos)
+    
+    return total_dates, total_events,datos
 
 def req_6(control):
     """

@@ -51,7 +51,7 @@ def new_controller():
 
 
 def print_menu():
-    print("Bienvenido")
+    print("\nBienvenido")
     print("1- Cargar información")
     print("2- Conocer los eventos sismicos entre dos fechas")
     print("3- Conocer los eventos sísmicos entre dos magnitudes")
@@ -59,7 +59,7 @@ def print_menu():
     print("5- Consultar los 15 eventos sísmicos más recientes según su significancia y una distancia azimutal ")
     print("6- Consultar los 20 eventos más recientes para una profundidad dada y registrados por un cierto número de estaciones")
     print("7- Reportar el evento más significativo y los N eventos más próximos cronológicamente ocurridos dentro del área alrededor de un punto")
-    print("8-Graficar un histograma anual de los eventos ocurridos según la región y propiedades de los eventos")
+    print("8- Graficar un histograma anual de los eventos ocurridos según la región y propiedades de los eventos")
     print("9- Visualizar los eventos sísmicos de cada requerimiento en un mapa interactivo ")
     print("0- Salir")
 
@@ -84,8 +84,9 @@ def print_req_1(control):
         Función que imprime la solución del Requerimiento 1 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 1
-    inicial = input("fecha inicial: ")
-    final = input("fecha final: ")
+    print("\n=============== Req No. 1 Inputs ===============")
+    inicial = input("Start date: ")
+    final = input("End date: ")
     
     return controller.req_1(control, inicial,final)
 
@@ -95,6 +96,7 @@ def print_req_2(control):
         Función que imprime la solución del Requerimiento 2 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 2
+    print("\n=============== Req No. 2 Inputs ===============")
     inf = input("El límite inferior de la magnitud: ")
     sup = input("El límite superior de la magnitud: ")
     
@@ -114,6 +116,7 @@ def print_req_4(control):
         Función que imprime la solución del Requerimiento 4 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 4
+    print("\n=============== Req No. 4 Inputs ===============")
     sig = input("La significancia mínima del evento: ")
     gap = input("La distancia azimutal máxima del evento: ")
     return controller.req_4(control,sig,gap)
@@ -121,10 +124,13 @@ def print_req_4(control):
 
 def print_req_5(control):
     """
-        Función que imprime la solución del Requerimiento 5 en consola
+        Función que imprime la solución del Requerimiento 4 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 5
-    pass
+    # TODO: Imprimir el resultado del requerimiento 4
+    print("\n=============== Req No. 5 Inputs ===============")
+    depth = input("Min depth: ")
+    nst = input("Max nst (seismic stations): ")
+    return controller.req_5(control, depth, nst)
 
 
 def print_req_6(control):
@@ -132,7 +138,13 @@ def print_req_6(control):
         Función que imprime la solución del Requerimiento 6 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 6
-    pass
+    print("\n=============== Req No. 6 Inputs ===============")
+    year = input("Year: ")
+    latitude = input("Focus Latitude: ")
+    longitude = input("Focus Longitude: ")
+    radius = input("Relevant Radius: " + "[km]")
+    m_i_events = input("Number of most imoortant events: \n\n")
+    return controller.req_5(control, year, latitude, longitude, radius, m_i_events)
 
 
 def print_req_7(control):
@@ -163,7 +175,7 @@ if __name__ == "__main__":
     #ciclo del menu
     while working:
         print_menu()
-        inputs = input('Seleccione una opción para continuar\n')
+        inputs = input('\nSeleccione una opción para continuar\n')
         if int(inputs) == 1:
             
             print("\nTamaño de los archivos: ")
@@ -192,8 +204,12 @@ if __name__ == "__main__":
                 lista.append(dos)
                 lista.append(tres)
                 listas.append(lista)
+            
+            print("\n=============== Req No. 1 Results ===============")
             print("Total different dates: " +str(diff_dates))
             print("Total events between dates: " +str(total_sis))
+            print("Consult size: " +str(consult_size) + "Only the first and last '3' results are:")
+            
             keys = ["time","events","details"]
             print(tabulate(listas,headers= keys ,tablefmt="grid"))
 
@@ -210,10 +226,12 @@ if __name__ == "__main__":
                 lista.append(dos)
                 lista.append(tres)
                 listas.append(lista)
+                
+            print("\n=============== Req No. 2 Results ===============")
             print("Total different dates: " +str(total_mag))
             print("Total events between dates: " +str(total_events))
             print("Consult has " + str(total_mag) + " results")
-            print("Consult size: " +str(consult_size) + "Only the first and last 3 results are:")
+            print("Consult size: " +str(consult_size) + "Only the first and last '3' results are:")
             
             keys = ["time","events","details"]
             print(tabulate(listas,headers= keys ,tablefmt="grid"))
@@ -233,20 +251,53 @@ if __name__ == "__main__":
                 lista.append(dos)
                 lista.append(tres)
                 listas.append(lista)
+            
+            print("\n=============== Req No. 4 Results ===============")
             print("Total different dates: " +str(total_dates))
             print("Total events between dates: " +str(total_events))
             print("Selecting the first 15 results...")
-            print("Consult size: " +str(total_dates) + "The first and last 3 of the 15 results are:")
+            print("Consult size: " +str(total_dates) + " The first and last '3' of the '15' results are:")
             
             
             keys = ["time","events","details"]
             print(tabulate(listas,headers= keys ,tablefmt="grid"))
 
         elif int(inputs) == 6:
-            print_req_5(control)
+            total_dates, total_events, data = print_req_5(control)
+            listas = []
+            for datos in lt.iterator(data):
+                uno = lt.getElement(datos,1)
+                dos = lt.getElement(datos,2)
+                tres = lt.getElement(datos,3)
+                lista = []
+                lista.append(uno)
+                lista.append(dos)
+                lista.append(tres)
+                listas.append(lista)
+            
+            print("\n=============== Req No. 5 Results ===============")
+            print(f"Total different dates: '{str(total_dates)}'")
+            print(f"Total events between dates: '{str(total_events)}'")
+            print("Selecting the first 20 results...\n")
+            print(f"Consult size: '{str(total_dates)}' The first and last '3' of the '20' results are:")
+            
+            
+            keys = ["time","events","details"]
+            print(tabulate(listas,headers= keys ,tablefmt="grid"))
+            print()
 
         elif int(inputs) == 7:
-            print_req_6(control)
+            print(f"Max event code: '{str(total_dates)}'")
+            print(f"Post n events: '{str(total_dates)}'")
+            print(f"Pre n events: '{str(total_dates)}'\n")
+            
+            print("\n=============== Req No. 6 Results ===============")
+            print(f"Number of events within radius: '{str(total_dates)}'")
+            print(f"Max number of possible events: '{str(total_events)}'")
+            print(f"Total different dates: '{str(total_events)}'")
+            print(f"Total events between dates: '{str(total_events)}'")
+            print("Selecting the first 20 results...\n")
+            print(f"Consult size: '{str(total_dates)}' The first and last '3' of the '20' results are:")
 
         elif int(inputs) == 8:
             print_req_7(control)
