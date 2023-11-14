@@ -209,6 +209,7 @@ def lab_lista_req1(lista_de_listas):
     total_dates = lt.size(lista)
 
     return total_dates,total_sis,lista
+
 def ultimos_primeros(data):
     
     if lt.size(data) < 6:
@@ -289,6 +290,7 @@ def req_2(sismo):
         om.put(mag,magnitud,mapa)
 
     return contador,mag
+
 def tabulate_req_2(bts,inf,sup):
     inf = om.ceiling(bts,inf)
     sup = om.floor(bts,sup)
@@ -313,7 +315,6 @@ def tabulate_req_2(bts,inf,sup):
         lt.addLast(lista,tabla)
         lt.addLast(listas,lista)
     return lt.size(listas),filtrado,listas
-        
 
 
 def req_3(sismo, mag, depth):
@@ -346,9 +347,9 @@ def req_3(sismo, mag, depth):
     return(om.size(bst), cont, tabulate_req_3(bst, om.size(bst)))
 
 
-def tabulate_req_3(bst,num):
-    ini = om.select(bst,num-20)
-    ult = om.select(bst,num-1)
+def tabulate_req_3(bst, num):
+    ini = om.select(bst, num - 20)
+    ult = om.select(bst, num - 1)
     lista_de_listas = om.values(bst,ini,ult)
 
     lista = lt.newList("ARRAY_LIST")
@@ -362,10 +363,10 @@ def tabulate_req_3(bst,num):
         lt.addLast(lista2,fecha)
         lt.addLast(lista2,size)
 
-        tabla = tabulate(lt.iterator(cada_lista),headers = "keys",tablefmt="grid")
+        tabla = tabulate(lt.iterator(cada_lista), headers = "keys", tablefmt = "grid")
 
         lt.addLast(lista2, tabla)
-        lt.addLast(lista,lista2)
+        lt.addLast(lista, lista2)
 
     return lista
 
