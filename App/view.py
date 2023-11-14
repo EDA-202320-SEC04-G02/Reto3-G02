@@ -107,6 +107,7 @@ def print_req_3(control):
     """
         Función que imprime la solución del Requerimiento 3 en consola
     """
+    print("\n=============== Req No, 3 Inputs ===============")
     mag = float(input("La magnitud mínima del evento: "))
     depth= float(input("La profundidad máxima del evento: "))
 
@@ -153,6 +154,7 @@ def print_req_7(control):
     """
         Función que imprime la solución del Requerimiento 7 en consola
     """
+    print("\n=============== Req No, 3 Inputs ===============")
     anio = input("El año relevante: ")
     title = input("El título de la región asociada: ")
     prop = input("La propiedad de conteo (magnitud, profundidad o significancia): ")
@@ -242,6 +244,7 @@ if __name__ == "__main__":
             print(tabulate(listas,headers= keys ,tablefmt="grid"))
 
         elif int(inputs) == 4:
+            
             print_req_3(control)
 
         elif int(inputs) == 5:

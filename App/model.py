@@ -316,12 +316,61 @@ def tabulate_req_2(bts,inf,sup):
         
 
 
-def req_3(data_structs):
+def req_3(sismo, mag, depth):
     """
     Función que soluciona el requerimiento 3
     """
-    # TODO: Realizar el requerimiento 3
-    pass
+    valores = om.valueSet(sismo)
+    bst = om.newMap(omaptype="RBT",cmpfunction=compareDates)
+    contador = 0
+    for valor in lt.iterator(valores):
+
+        if float(valor["mag"]) > mag and valor != None and float(valor["depth"]) >= depth:                        
+            contador =contador + 1
+
+            lista = lt.newList("ARRAY_LIST")
+
+            fecha = datetime.datetime.strptime(valor["time"][:-11],"%Y-%m-%dT%H:%M")
+            entry = om.get(bst,fecha)
+
+            if entry:
+                lista = me.getValue(entry)
+                lt.removeLast(lista)
+
+            if valor != None:
+                lt.addLast(lista,valor)
+
+            valor.pop("time")
+            lt.addLast(lista, fecha)
+            om.put(bst, fecha, lista)
+
+    num = om.size(bst)
+
+    return(om.size(bst), contador, tabulate_req_3(bst,num))
+
+
+def tabulate_req_3(bst,num):
+    ini = om.select(bst,num-20)
+    ult = om.select(bst,num-1)
+    lista_de_listas = om.values(bst,ini,ult)
+
+    lista = lt.newList("ARRAY_LIST")
+
+    for cada_lista in lt.iterator(lista_de_listas):
+        lista2 = lt.newList("ARRAY_LIST")
+        fecha = lt.lastElement(cada_lista)
+        lt.removeLast(cada_lista)
+        size = lt.size(cada_lista)
+
+        lt.addLast(lista2,fecha)
+        lt.addLast(lista2,size)
+
+        tabla = tabulate(lt.iterator(cada_lista),headers = "keys",tablefmt="grid")
+
+        lt.addLast(lista2, tabla)
+        lt.addLast(lista,lista2)
+
+    return lista
 
 
 def req_4(sismo,sig,gap):
@@ -356,9 +405,8 @@ def req_4(sismo,sig,gap):
     total_dates = om.size(bst)
     total_events = contador
     return total_dates, total_events,data
-            
-            
-        
+
+
 def tabulate_req_4(bst,num):
     ini = om.select(bst,num-15)
     ult = om.select(bst,num-1)
@@ -382,17 +430,13 @@ def tabulate_req_4(bst,num):
         lt.addLast(lista,lista2)
 
     return lista
-     
-    
-
-    
 
 
 def req_5(sismo, depth, nst):
     """
-    Función que soluciona el requerimiento 4
+    Función que soluciona el requerimiento 5
     """
-    # TODO: Realizar el requerimiento 4
+    # TODO: Realizar el requerimiento 5
     valores = om.valueSet(sismo)
     bst = om.newMap(omaptype="RBT",cmpfunction=compareDates)
     contador = 0
@@ -421,7 +465,6 @@ def req_5(sismo, depth, nst):
     return total_dates, total_events,data
 
 
-
 def tabulate_req_5(bst,num):
     ini = om.select(bst,num-20)
     ult = om.select(bst,num-1)
@@ -445,8 +488,7 @@ def tabulate_req_5(bst,num):
         lt.addLast(lista,lista2)
 
     return lista
-            
-            
+
 
 def req_6(data_structs):
     """

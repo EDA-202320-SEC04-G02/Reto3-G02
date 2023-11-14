@@ -133,17 +133,19 @@ def req_2(control,inf,sup):
     input()
     return total_mag, total_events,consult_size,lista_final
 
+
 def req_3(control, mag, depth):
     """
     Retorna el resultado del requerimiento 3
     """
     sismo = control["model"]
+    mag = float(mag)
+    depth = float(depth)
 
-    datos = model.req_3(sismo["seg"])
-    lista = model.tabulate_req_3(datos, mag, depth)
-    lista = model.ultimos_primeros(datos)
-
-    return lista
+    total_dates, total_events,datos = model.req_4(sismo["seg"], mag, depth)
+    datos = model.ultimos_primeros(datos)
+    
+    return total_dates, total_events
 
 def req_4(control,sig,gap):
     """
