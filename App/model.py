@@ -41,6 +41,7 @@ from DISClib.Algorithms.Sorting import mergesort as merg
 from DISClib.Algorithms.Sorting import quicksort as quk
 import datetime
 from tabulate import tabulate
+import math
 
 
 assert cf
@@ -243,6 +244,26 @@ def req_1(sismos,inicial,final):
     
     return om.values(bst,inicial,final)
 
+def tabulate_req_1(bst):
+    
+    lista = lt.newList("ARRAY_LIST")
+    
+    contador = 0
+    for cada_lista in lt.iterator(bst):
+        lista2 = lt.newList("ARRAY_LIST")
+        fecha = lt.lastElement(cada_lista)
+        lt.removeLast(cada_lista)
+        size = lt.size(cada_lista)
+        contador = contador + size
+        lt.addLast(lista2,fecha)
+        lt.addLast(lista2,size)
+        
+        tabla = tabulate(lt.iterator(cada_lista),headers = "keys",tablefmt="grid")
+
+        lt.addLast(lista2, tabla)
+        lt.addLast(lista,lista2)
+
+    return lt.size(bst),contador, lista 
 
 def req_2(sismo):
     """
@@ -250,37 +271,37 @@ def req_2(sismo):
     """
     # TODO: Realizar el requerimiento 2
     valores = om.valueSet(sismo)
-
     mag = om.newMap(omaptype="RBT",cmpfunction=compareMag)
+    contador = 0
     for valor in lt.iterator(valores):
         magnitud = float(valor["mag"])
         fecha = valor["time"]
         
         llavevalor = om.get(mag,magnitud)
         if llavevalor is None:
-                
             mapa = om.newMap(omaptype="RBT",cmpfunction=compareDates2)
-                
+            
         else:
-
             mapa = me.getValue(llavevalor)
+            contador = contador + 1
             
         om.put(mapa,fecha,valor)  
         om.put(mag,magnitud,mapa)
 
-    return mag
+    return contador,mag
 def tabulate_req_2(bts,inf,sup):
     inf = om.ceiling(bts,inf)
     sup = om.floor(bts,sup)
 
     filtrado = om.values(bts,inf,sup)
-
+    contador = 0
     listas = lt.newList("ARRAY_LIST") 
     for cada_mapa in lt.iterator(filtrado):
         lista = lt.newList("ARRAY_LIST") 
         vals = om.valueSet(cada_mapa)
         events = lt.size(vals)
         vals = ultimos_primeros(vals)
+        contador = lt.size(vals) + contador
     
         tabla = tabulate(lt.iterator(vals),headers = "keys", tablefmt="grid")
         
@@ -291,7 +312,7 @@ def tabulate_req_2(bts,inf,sup):
         lt.addLast(lista,events)
         lt.addLast(lista,tabla)
         lt.addLast(listas,lista)
-    return listas
+    return lt.size(listas),filtrado,listas
         
 
 
@@ -309,12 +330,12 @@ def req_4(sismo,sig,gap):
     """
     # TODO: Realizar el requerimiento 4
     valores = om.valueSet(sismo)
-    bst = om.newMap(omaptype="RBT",cmpfunction=compareDates2)
+    bst = om.newMap(omaptype="RBT",cmpfunction=compareDates)
     contador = 0
     for valor in lt.iterator(valores):
         
-        if int(valor["sig"])>=sig and float(valor["gap"])<=gap:
-            
+        if int(valor["sig"])>=sig and float(valor["gap"])<=gap and valor != None:
+                        
             contador =contador + 1
             
             lista = lt.newList("ARRAY_LIST")
@@ -329,8 +350,8 @@ def req_4(sismo,sig,gap):
             valor.pop("time")
             lt.addLast(lista,fecha)
             om.put(bst,fecha,lista)
-    
-    data = tabulate_req_4(bst,15)
+    num = om.size(bst)
+    data = tabulate_req_4(bst,num)
     
     total_dates = om.size(bst)
     total_events = contador
@@ -339,7 +360,7 @@ def req_4(sismo,sig,gap):
             
         
 def tabulate_req_4(bst,num):
-    ini = om.select(bst,0)
+    ini = om.select(bst,num-15)
     ult = om.select(bst,num-1)
     lista_de_listas = om.values(bst,ini,ult)
     
@@ -363,17 +384,58 @@ def tabulate_req_4(bst,num):
     return lista
      
     
-def tabulate_req_1(bst):
+
+    
+
+
+def req_5(sismo, depth, nst):
+    """
+    Función que soluciona el requerimiento 4
+    """
+    # TODO: Realizar el requerimiento 4
+    valores = om.valueSet(sismo)
+    bst = om.newMap(omaptype="RBT",cmpfunction=compareDates)
+    contador = 0
+    for valor in lt.iterator(valores):
+        
+        if float(valor["depth"])>=depth and float(valor["nst"])>nst and valor != None:
+                        
+            contador =contador + 1
+            
+            lista = lt.newList("ARRAY_LIST")
+            
+            fecha = datetime.datetime.strptime(valor["time"][:-11],"%Y-%m-%dT%H:%M")
+            entry = om.get(bst,fecha)
+            if entry:
+                lista = me.getValue(entry)
+                lt.removeLast(lista)
+            if valor != None:
+                lt.addLast(lista,valor)
+            valor.pop("time")
+            lt.addLast(lista,fecha)
+            om.put(bst,fecha,lista)
+    num = om.size(bst)
+    data = tabulate_req_5(bst,num)
+    total_dates = om.size(bst)
+    total_events = contador
+    return total_dates, total_events,data
+
+
+
+def tabulate_req_5(bst,num):
+    ini = om.select(bst,num-20)
+    ult = om.select(bst,num-1)
+    lista_de_listas = om.values(bst,ini,ult)
     
     lista = lt.newList("ARRAY_LIST")
     
-    contador = 0
-    for cada_lista in lt.iterator(bst):
+
+    for cada_lista in lt.iterator(lista_de_listas):
         lista2 = lt.newList("ARRAY_LIST")
         fecha = lt.lastElement(cada_lista)
         lt.removeLast(cada_lista)
         size = lt.size(cada_lista)
-        contador = contador + size
+        
         lt.addLast(lista2,fecha)
         lt.addLast(lista2,size)
         
@@ -382,17 +444,9 @@ def tabulate_req_1(bst):
         lt.addLast(lista2, tabla)
         lt.addLast(lista,lista2)
 
-    return lt.size(bst),contador, lista
-    
-
-
-def req_5(data_structs):
-    """
-    Función que soluciona el requerimiento 5
-    """
-    # TODO: Realizar el requerimiento 5
-    pass
-
+    return lista
+            
+            
 
 def req_6(data_structs):
     """
@@ -487,3 +541,23 @@ def compareDates2(date1, date2):
         return 1
     else:
         return -1
+
+def Haversine(lat1,lat2,long1,long2):
+    lat1 = float(lat1)
+    lat1 = float(lat2)
+    long1 = float(long1)
+    long2 = float(long2)
+    
+    lat1= math.radians(lat1)
+    lat2 =  math.radians(lat2)
+    long1 = math.radians(long1)
+    long2 = math.radians(long2)
+    
+    delta_lat = lat2-lat1
+    delta_long = long2-long1
+    a = math.sin(delta_lat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(delta_long/2)**2
+    
+    c = math.sqrt(a)
+    distancia = 2 * 6731 * math.asin(c)
+    
+    return distancia
