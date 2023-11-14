@@ -105,8 +105,10 @@ def print_req_3(control):
     """
         Función que imprime la solución del Requerimiento 3 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 3
-    pass
+    mag = float(input("La magnitud mínima del evento: "))
+    depth= float(input("La profundidad máxima del evento: "))
+
+    return controller.req_3(control, mag, depth)
 
 
 def print_req_4(control):
@@ -139,9 +141,12 @@ def print_req_7(control):
     """
         Función que imprime la solución del Requerimiento 7 en consola
     """
-    # TODO: Imprimir el resultado del requerimiento 7
-    pass
+    anio = input("El año relevante: ")
+    title = input("El título de la región asociada: ")
+    prop = input("La propiedad de conteo (magnitud, profundidad o significancia): ")
+    bins = input("El número de segmentos o casillas en los que se divide el histograma: ")
 
+    return controller.req_7(control, anio, title, prop, bins)
 
 def print_req_8(control):
     """

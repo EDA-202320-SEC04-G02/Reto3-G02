@@ -130,13 +130,17 @@ def req_2(control,inf,sup):
     lista_final = model.ultimos_primeros(lista_final)
     return lista_final
 
-def req_3(control):
+def req_3(control, mag, depth):
     """
     Retorna el resultado del requerimiento 3
     """
-    # TODO: Modificar el requerimiento 3
-    
+    sismo = control["model"]
 
+    datos = model.req_3(sismo["seg"])
+    lista = model.tabulate_req_3(datos, mag, depth)
+    lista = model.ultimos_primeros(datos)
+
+    return lista
 
 def req_4(control,sig,gap):
     """
@@ -168,13 +172,16 @@ def req_6(control):
     pass
 
 
-def req_7(control):
+def req_7(control, anio, title, prop, bins):
     """
     Retorna el resultado del requerimiento 7
     """
-    # TODO: Modificar el requerimiento 7
-    pass
+    sismo = control["model"]
+    datos = model.req_7(sismo["seg"])
+    lista = model.tabulate_req_3(datos, anio, title, prop, bins)
+    lista = model.ultimos_primeros(datos)
 
+    return lista
 
 def req_8(control):
     """
