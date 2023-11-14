@@ -320,33 +320,30 @@ def req_3(sismo, mag, depth):
     """
     Función que soluciona el requerimiento 3
     """
-    valores = om.valueSet(sismo)
-    bst = om.newMap(omaptype="RBT",cmpfunction=compareDates)
-    contador = 0
-    for valor in lt.iterator(valores):
+    values = om.valueSet(sismo)
+    bst = om.newMap(omaptype = "RBT", cmpfunction = compareDates)
+    cont = 0
 
-        if float(valor["mag"]) > mag and valor != None and float(valor["depth"]) >= depth:                        
-            contador =contador + 1
+    for value in lt.iterator(values):
+        if float(value["mag"]) > mag and value != None and float(value["depth"]) >= depth:                        
+            cont += 1
 
-            lista = lt.newList("ARRAY_LIST")
-
-            fecha = datetime.datetime.strptime(valor["time"][:-11],"%Y-%m-%dT%H:%M")
-            entry = om.get(bst,fecha)
+            lists = lt.newList("ARRAY_LIST")
+            date = datetime.datetime.strptime(value["time"][:-11],"%Y-%m-%dT%H:%M")
+            entry = om.get(bst, date)
 
             if entry:
-                lista = me.getValue(entry)
-                lt.removeLast(lista)
+                lists = me.getValue(entry)
+                lt.removeLast(lists)
 
-            if valor != None:
-                lt.addLast(lista,valor)
+            if value != None:
+                lt.addLast(lists, value)
 
-            valor.pop("time")
-            lt.addLast(lista, fecha)
-            om.put(bst, fecha, lista)
+            value.pop("time")
+            lt.addLast(lists, date)
+            om.put(bst, date, lists)
 
-    num = om.size(bst)
-
-    return(om.size(bst), contador, tabulate_req_3(bst,num))
+    return(om.size(bst), cont, tabulate_req_3(bst, om.size(bst)))
 
 
 def tabulate_req_3(bst,num):
