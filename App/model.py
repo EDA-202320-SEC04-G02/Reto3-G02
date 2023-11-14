@@ -229,7 +229,7 @@ def req_1(sismos,inicial,final):
     valores = om.valueSet(sismos)
     bst = om.newMap(omaptype="RBT",cmpfunction=compareDates)
     for valor in lt.iterator(valores):
-          
+        copia = valor.copy()
         lista = lt.newList("ARRAY_LIST")
         
         fecha = datetime.datetime.strptime(valor["time"][:-11],"%Y-%m-%dT%H:%M")
@@ -238,8 +238,8 @@ def req_1(sismos,inicial,final):
             lista = me.getValue(entry)
             lt.removeLast(lista)
         if valor != None:
-            lt.addLast(lista,valor)
-        valor.pop("time")
+            lt.addLast(lista,copia)
+        copia.pop("time")
         lt.addLast(lista,fecha)
         om.put(bst,fecha,lista)
     
@@ -328,7 +328,7 @@ def req_3(sismo, mag, depth):
     for value in lt.iterator(values):
         if float(value["mag"]) > mag and value != None and float(value["depth"]) >= depth:                        
             cont += 1
-
+            copia = value.copy()
             lists = lt.newList("ARRAY_LIST")
             date = datetime.datetime.strptime(value["time"][:-11],"%Y-%m-%dT%H:%M")
             entry = om.get(bst, date)
@@ -338,9 +338,9 @@ def req_3(sismo, mag, depth):
                 lt.removeLast(lists)
 
             if value != None:
-                lt.addLast(lists, value)
+                lt.addLast(lists, copia)
 
-            value.pop("time")
+            copia.pop("time")
             lt.addLast(lists, date)
             om.put(bst, date, lists)
 
@@ -372,19 +372,14 @@ def tabulate_req_3(bst, num):
 
 
 def req_4(sismo,sig,gap):
-    """
-    Función que soluciona el requerimiento 4
-    """
     # TODO: Realizar el requerimiento 4
     valores = om.valueSet(sismo)
     bst = om.newMap(omaptype="RBT",cmpfunction=compareDates)
     contador = 0
     for valor in lt.iterator(valores):
-        
         if int(valor["sig"])>=sig and float(valor["gap"])<=gap and valor != None:
             copia = valor.copy()   
             contador =contador + 1
-            
             lista = lt.newList("ARRAY_LIST")
             
             fecha = datetime.datetime.strptime(valor["time"][:-11],"%Y-%m-%dT%H:%M")
@@ -398,25 +393,16 @@ def req_4(sismo,sig,gap):
             lt.addLast(lista,fecha)
             om.put(bst,fecha,lista)
     num = om.size(bst)
-    
-    
-    num = om.size(bst)
     ini = om.select(bst,num-15)
     ult = om.select(bst,num-1)
-    
     lista_de_listas = om.values(bst,ini,ult)
-    
     total_dates = om.size(bst)
     total_events = contador
     return total_dates, total_events,lista_de_listas
 
 
 def tabulate_req_4(lista_de_listas):
-    
-    
     lista = lt.newList("ARRAY_LIST")
-    
-
     for cada_lista in lt.iterator(lista_de_listas):
         lista2 = lt.newList("ARRAY_LIST")
         fecha = lt.lastElement(cada_lista)
@@ -492,12 +478,50 @@ def tabulate_req_5(bst,num):
     return lista
 
 
-def req_6(data_structs):
+def req_6(sismo, year, lat1, long1, radius, important_events):
     """
     Función que soluciona el requerimiento 6
     """
-    # TODO: Realizar el requerimiento 6
-    pass
+    values = om.valueSet(sismo)
+    tree = om.newMap(omaptype="RBT",cmpfunction=compareDates)
+    
+    inicio = f"{year}-01-01T00:00:00.000001Z"
+    fin = f"{year}-12-31T23:59:59.999999Z"
+    fecha1 = datetime.datetime.strptime(inicio,"%Y-%m-%dT%H:%M:%S.%fz")
+    fecha2 = datetime.datetime.strptime(fin,"%Y-%m-%dT%H:%M:%S.%fz")
+    
+    inf =  om.ceiling(sismo, fecha1)
+    sup =  om.floor(sismo, fecha2)
+    
+    filtrado = om.values(sismo, inf, sup)
+    the_choosen_one= {"sig":0}
+    
+    for valor in lt.iterator(filtrado):
+        lat2 = valor["lat"]
+        long2 = valor["long"]
+        copia = valor.copy()      
+        lista = lt.newList("ARRAY_LIST")
+        
+        fecha = datetime.datetime.strptime(valor["time"][:-11],"%Y-%m-%dT%H:%M")
+        entry = om.get(tree,fecha)
+        if entry:
+            lista = me.getValue(entry)
+            lt.removeLast(lista)
+        if copia != None:
+            lt.addLast(lista,copia)
+        copia.pop("time")
+        lt.addLast(lista,fecha)
+        om.put(tree,fecha,lista)
+        
+        if valor["sig"] > the_choosen_one["sig"]:
+            the_choosen_one = copia
+    
+    
+            
+        
+        
+    
+    
 
 
 def req_7(data_structs):

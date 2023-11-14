@@ -146,8 +146,8 @@ def print_req_6(control):
     latitude = input("Focus Latitude: ")
     longitude = input("Focus Longitude: ")
     radius = input("Relevant Radius: " + "[km]")
-    m_i_events = input("Number of most imoortant events: \n\n")
-    return controller.req_5(control, year, latitude, longitude, radius, m_i_events)
+    important_events = input("Number of most imoortant events: \n\n")
+    return controller.req_5(control, year, latitude, longitude, radius, important_events)
 
 
 def print_req_7(control):
