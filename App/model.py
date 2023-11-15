@@ -482,7 +482,6 @@ def req_6(sismo, year, lat1, long1, radius, important_events):
     """
     Función que soluciona el requerimiento 6
     """
-    values = om.valueSet(sismo)
     tree = om.newMap(omaptype="RBT",cmpfunction=compareDates)
     
     inicio = f"{year}-01-01T00:00:00.000001Z"
@@ -495,30 +494,71 @@ def req_6(sismo, year, lat1, long1, radius, important_events):
     
     filtrado = om.values(sismo, inf, sup)
     the_choosen_one= {"sig":0}
-    
+    contador = 0
     for valor in lt.iterator(filtrado):
         lat2 = valor["lat"]
         long2 = valor["long"]
-        copia = valor.copy()      
-        lista = lt.newList("ARRAY_LIST")
-        
-        fecha = datetime.datetime.strptime(valor["time"][:-11],"%Y-%m-%dT%H:%M")
-        entry = om.get(tree,fecha)
-        if entry:
-            lista = me.getValue(entry)
-            lt.removeLast(lista)
-        if copia != None:
-            lt.addLast(lista,copia)
-        copia.pop("time")
-        lt.addLast(lista,fecha)
-        om.put(tree,fecha,lista)
-        
-        if valor["sig"] > the_choosen_one["sig"]:
-            the_choosen_one = copia
+        distancia = Haversine(lat2,lat1,long2,long1)
+        print(distancia,valor["time"])
+
+        if  distancia <= float(radius):
+            copia = valor.copy()      
+            lista = lt.newList("ARRAY_LIST")
+            contador = 1+ contador
+            fecha = datetime.datetime.strptime(valor["time"][:-11],"%Y-%m-%dT%H:%M")
+            entry = om.get(tree,fecha)
+            if entry:
+                lista = me.getValue(entry)
+                lt.removeLast(lista)
+            if copia != None:
+                lt.addLast(lista,copia)
+            copia.pop("time")
+            lt.addLast(lista,fecha)
+            om.put(tree,fecha,lista)
+            
+            if int(valor["sig"]) > int(the_choosen_one["sig"]):
+                the_choosen_one = copia
+                
+    num = om.size(tree)
+    ini = om.select(tree,0)
+    ult = om.select(tree,int(important_events)+1)
     
+    lista_de_listas = om.values(tree,ini,ult)
+    total_dates = om.size(tree)
+    total_events = contador
+    
+    cont = 0 
+    gg = om.valueSet(sismo)
+    for valor in lt.iterator(gg):
+        lat2 = valor["lat"]
+        long2 = valor["long"]
+        distancia = Haversine(lat2,lat1,long2,long1)
+        if  distancia < float(radius):
+            cont = cont + 1
+    print(cont)
+    return total_dates,total_events,lista_de_listas,the_choosen_one
+        
     
             
+def tabulate_req_6(lista_de_listas):
+    lista = lt.newList("ARRAY_LIST")
+    for cada_lista in lt.iterator(lista_de_listas):
+        lista2 = lt.newList("ARRAY_LIST")
+        fecha = lt.lastElement(cada_lista)
+        lt.removeLast(cada_lista)
+        size = lt.size(cada_lista)
         
+        lt.addLast(lista2,fecha)
+        lt.addLast(lista2,size)
+        
+        tabla = tabulate(lt.iterator(cada_lista),headers = "keys",tablefmt="grid")
+
+        lt.addLast(lista2, tabla)
+        lt.addLast(lista,lista2)
+
+    return lista
+
+    return lista  
         
     
     
@@ -612,7 +652,7 @@ def compareDates2(date1, date2):
 
 def Haversine(lat1,lat2,long1,long2):
     lat1 = float(lat1)
-    lat1 = float(lat2)
+    lat2 = float(lat2)
     long1 = float(long1)
     long2 = float(long2)
     

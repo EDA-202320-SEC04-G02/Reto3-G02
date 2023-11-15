@@ -184,13 +184,20 @@ def req_5(control, depth, nst):
     
     return total_dates, total_events,datos,delta
 
-def req_6(control):
+def req_6(control, year, lat1, long1, radius,important_events):
     """
     Retorna el resultado del requerimiento 6
     """
     # TODO: Modificar el requerimiento 6
-    pass
+    inicial = get_time()
+    sismo = control["model"]
+    total_dates,total_events,lista_de_listas,the_choosen_one = model.req_6(sismo["seg"], year, lat1, long1, radius,important_events)
 
+    final = get_time()
+    delta = delta_time(inicial,final)
+    data = model.tabulate_req_6(lista_de_listas)
+    data = model.ultimos_primeros(data)
+    return total_dates,total_events,data,the_choosen_one,delta
 
 def req_7(control, anio, title, prop, bins):
     """

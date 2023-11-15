@@ -146,8 +146,8 @@ def print_req_6(control):
     latitude = input("Focus Latitude: ")
     longitude = input("Focus Longitude: ")
     radius = input("Relevant Radius: " + "[km]")
-    important_events = input("Number of most imoortant events: \n\n")
-    return controller.req_5(control, year, latitude, longitude, radius, important_events)
+    important_events = input("Number of most imoortant events: ")
+    return controller.req_6(control, year, latitude, longitude, radius, important_events)
 
 
 def print_req_7(control):
@@ -297,17 +297,39 @@ if __name__ == "__main__":
             print()
 
         elif int(inputs) == 7:
-            print(f"Max event code: '{str(total_dates)}'")
+            
+            total_dates,total_events,data,the_choosen_one,delta = print_req_6(control)
+            listas = []
+            for datos in lt.iterator(data):
+                uno = lt.getElement(datos,1)
+                dos = lt.getElement(datos,2)
+                tres = lt.getElement(datos,3)
+                lista = []
+                lista.append(uno)
+                lista.append(dos)
+                lista.append(tres)
+                listas.append(lista)
+            code = str(the_choosen_one["code"])
+            print(f"Max event code: '{(code)}'")
             print(f"Post n events: '{str(total_dates)}'")
             print(f"Pre n events: '{str(total_dates)}'\n")
             
             print("\n=============== Req No. 6 Results ===============")
             print(f"Number of events within radius: '{str(total_dates)}'")
             print(f"Max number of possible events: '{str(total_events)}'")
-            print(f"Total different dates: '{str(total_events)}'")
+            print(f"Total different dates: '{str(total_dates)}'")
             print(f"Total events between dates: '{str(total_events)}'")
-            print("Selecting the first 20 results...\n")
-            print(f"Consult size: '{str(total_dates)}' The first and last '3' of the '20' results are:")
+            print(f"Max event: ")
+            print(tabulate([the_choosen_one], headers= "keys" ,tablefmt="grid"))
+            
+            
+            print("Nearest Events in chronological order\n")
+            print(f"Most important events relate to the max event: '{str(total_dates)}'")
+            print(f"Consult size: '{str(total_dates)}' The first and last '3' are:")
+            keys = ["time","events","details"]
+            print(tabulate(listas,headers= keys ,tablefmt="grid"))
+            
+            
 
         elif int(inputs) == 8:
             print_req_7(control)
