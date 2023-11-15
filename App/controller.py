@@ -47,6 +47,8 @@ def load_data(control, tamaño):
     """
     Carga los datos del reto
     """
+    inicio = get_time()
+
     tamaño = int(tamaño)
     tm = 'small'
     if tamaño == 2:
@@ -68,6 +70,8 @@ def load_data(control, tamaño):
     sismo = control["model"]
     load_date(sismo,tm)
     primero_ultimos,size = model.primeros_ultimos_5(sismo["seg"])
+    final = get_time()
+    delta = delta_time(inicio,final)
     
     return primero_ultimos,size
 
@@ -109,14 +113,18 @@ def req_1(control,inicial,final):
     """
     Retorna el resultado del requerimiento 1
     """
+    inicio = get_time()
     sismo = control["model"]
     datos = model.req_1(sismo["seg"],inicial,final)
+    final = get_time()
+    delta = delta_time(inicio,final)
     
     diff_dates,total_sis,datos_finales= model.tabulate_req_1(datos)
     datos_finales = model.ultimos_primeros(datos_finales)
     
     
-    return diff_dates,total_sis,datos_finales
+    
+    return diff_dates,total_sis,datos_finales, delta
 
 
 def req_2(control,inf,sup):
@@ -124,13 +132,12 @@ def req_2(control,inf,sup):
     Retorna el resultado del requerimiento 2
     """
     # TODO: Modificar el requerimiento 2
+    inicial = get_time()
     sismo = control["model"]
     consult_size,datos = model.req_2(sismo["seg"])
     total_mag,total_events, lista_final = model.tabulate_req_2(datos,inf,sup)
     lista_final = model.ultimos_primeros(lista_final)
     
-    print(total_mag, total_events,consult_size)
-    input()
     return total_mag, total_events,consult_size,lista_final
 
 

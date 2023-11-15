@@ -195,12 +195,12 @@ if __name__ == "__main__":
             
             
             
-            data,size = load_data(control, tamaño)
+            data, size = load_data(control, tamaño)
             print("Numero de sismos cargados: " + str(size))
             print(tabulate(lt.iterator(data),headers="keys", tablefmt="grid"))
             
         elif int(inputs) == 2:
-            diff_dates,total_sis,data = print_req_1(control)
+            diff_dates,total_sis,data, delta = print_req_1(control)
             listas = []
             for datos in lt.iterator(data):
                 uno = lt.getElement(datos,1)
@@ -215,10 +215,11 @@ if __name__ == "__main__":
             print("\n=============== Req No. 1 Results ===============")
             print("Total different dates: " +str(diff_dates))
             print("Total events between dates: " +str(total_sis))
-            print("Consult size: " +str(consult_size) + "Only the first and last '3' results are:")
+            print(f"Consult size: {str(diff_dates)} Only the first and last '3' results are:")
             
             keys = ["time","events","details"]
             print(tabulate(listas,headers= keys ,tablefmt="grid"))
+            print(f"Se tardo: {delta}ms ")
 
         elif int(inputs) == 3:
             

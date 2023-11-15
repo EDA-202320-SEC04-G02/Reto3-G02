@@ -223,8 +223,8 @@ def req_1(sismos,inicial,final):
     Función que soluciona el requerimiento 1
     """
     # TODO: Realizar el requerimiento 1
-    inicial = datetime.datetime.strptime(inicial,"%Y-%m-%dT%H:%M")
-    final = datetime.datetime.strptime(final,"%Y-%m-%dT%H:%M")
+    inicial = datetime.datetime.strptime(str(inicial),"%Y-%m-%dT%H:%M")
+    final = datetime.datetime.strptime(str(final),"%Y-%m-%dT%H:%M")
     
     valores = om.valueSet(sismos)
     bst = om.newMap(omaptype="RBT",cmpfunction=compareDates)
@@ -314,7 +314,7 @@ def tabulate_req_2(bts,inf,sup):
         lt.addLast(lista,events)
         lt.addLast(lista,tabla)
         lt.addLast(listas,lista)
-    return lt.size(listas),filtrado,listas
+    return lt.size(listas),lt.size(filtrado),listas
 
 
 def req_3(sismo, mag, depth):
@@ -499,7 +499,6 @@ def req_6(sismo, year, lat1, long1, radius, important_events):
         lat2 = valor["lat"]
         long2 = valor["long"]
         distancia = Haversine(lat2,lat1,long2,long1)
-        print(distancia,valor["time"])
 
         if  distancia <= float(radius):
             copia = valor.copy()      
@@ -519,23 +518,13 @@ def req_6(sismo, year, lat1, long1, radius, important_events):
             if int(valor["sig"]) > int(the_choosen_one["sig"]):
                 the_choosen_one = copia
                 
-    num = om.size(tree)
     ini = om.select(tree,0)
     ult = om.select(tree,int(important_events)+1)
     
     lista_de_listas = om.values(tree,ini,ult)
     total_dates = om.size(tree)
     total_events = contador
-    
-    cont = 0 
-    gg = om.valueSet(sismo)
-    for valor in lt.iterator(gg):
-        lat2 = valor["lat"]
-        long2 = valor["long"]
-        distancia = Haversine(lat2,lat1,long2,long1)
-        if  distancia < float(radius):
-            cont = cont + 1
-    print(cont)
+
     return total_dates,total_events,lista_de_listas,the_choosen_one
         
     
