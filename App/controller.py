@@ -145,14 +145,20 @@ def req_3(control, mag, depth):
     """
     Retorna el resultado del requerimiento 3
     """
+    inicial = get_time()
     sismo = control["model"]
-    mag = float(mag)
+    mag = int(mag)
     depth = float(depth)
 
-    total_dates, total_events,datos = model.req_4(sismo["seg"], mag, depth)
+    total_dates, total_events,datos = model.req_3(sismo["seg"], mag, depth)
+
+    datos = model.tabulate_req_3(datos)
     datos = model.ultimos_primeros(datos)
-    
-    return total_dates, total_events
+    final = get_time()
+    delta = delta_time(inicial,final)
+
+    return total_dates, total_events, datos, delta
+
 
 def req_4(control,sig,gap):
     """
@@ -212,7 +218,7 @@ def req_7(control, anio, title, prop, bins):
     """
     sismo = control["model"]
     datos = model.req_7(sismo["seg"])
-    lista = model.tabulate_req_3(datos, anio, title, prop, bins)
+    lista = model.tabulate_req_7(datos, anio, title, prop, bins)
     lista = model.ultimos_primeros(datos)
 
     return lista

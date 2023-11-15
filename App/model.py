@@ -326,11 +326,12 @@ def req_3(sismo, mag, depth):
     cont = 0
 
     for value in lt.iterator(values):
-        if float(value["mag"]) > mag and value != None and float(value["depth"]) >= depth:                        
+        if float(value["mag"]) > float(mag) and float(value["depth"]) < float(depth) and value != None:                        
             cont += 1
-            copia = value.copy()
+            copy = value.copy()
+
             lists = lt.newList("ARRAY_LIST")
-            date = datetime.datetime.strptime(value["time"][:-11],"%Y-%m-%dT%H:%M")
+            date = datetime.datetime.strptime(value["time"][:-11], "%Y-%m-%dT%H:%M")
             entry = om.get(bst, date)
 
             if entry:
@@ -338,18 +339,18 @@ def req_3(sismo, mag, depth):
                 lt.removeLast(lists)
 
             if value != None:
-                lt.addLast(lists, copia)
+                lt.addLast(lists, copy)
 
-            copia.pop("time")
+            copy.pop("time")
             lt.addLast(lists, date)
             om.put(bst, date, lists)
 
-    return(om.size(bst), cont, tabulate_req_3(bst, om.size(bst)))
+    return om.size(bst), cont, tabulate_req_3(bst)
 
 
-def tabulate_req_3(bst, num):
-    ini = om.select(bst, num - 20)
-    ult = om.select(bst, num - 1)
+def tabulate_req_3(bst):
+    ini = om.select(bst, 10 - 19)
+    ult = om.select(bst, 10 - 1)
     lista_de_listas = om.values(bst,ini,ult)
 
     lista = lt.newList("ARRAY_LIST")
@@ -363,10 +364,10 @@ def tabulate_req_3(bst, num):
         lt.addLast(lista2,fecha)
         lt.addLast(lista2,size)
 
-        tabla = tabulate(lt.iterator(cada_lista), headers = "keys", tablefmt = "grid")
+        tabla = tabulate(lt.iterator(cada_lista),headers = "keys",tablefmt="grid")
 
         lt.addLast(lista2, tabla)
-        lt.addLast(lista, lista2)
+        lt.addLast(lista,lista2)
 
     return lista
 
@@ -547,18 +548,77 @@ def tabulate_req_6(lista_de_listas):
 
     return lista
 
-    return lista  
-        
-    
-    
 
-
-def req_7(data_structs):
+def req_7(sismo, year, title, prop, bins):
     """
     Función que soluciona el requerimiento 7
     """
-    # TODO: Realizar el requerimiento 7
-    pass
+    tree = om.newMap(omaptype = "RBT", cmpfunction = compareDates)
+
+    date1 = datetime.datetime.strptime(f"{year}-01-01T00:00:00.000001Z","%Y-%m-%dT%H:%M:%S.%fz")
+    date2 = datetime.datetime.strptime(f"{year}-12-31T23:59:59.999999Z","%Y-%m-%dT%H:%M:%S.%fz")
+
+    down =  om.ceiling(sismo, date1)
+    up =  om.floor(sismo, date2)
+    filt = om.values(sismo, down, up)
+    ans = {"sig" : 0}
+    cont = 0
+
+    for value in lt.iterator(filt):
+        if title <= float(prop):
+            copy = value.copy()      
+            lista = lt.newList("ARRAY_LIST")
+            cont += 1
+
+            date = datetime.datetime.strptime(value["time"][:-11],"%Y-%m-%dT%H:%M")
+            entry = om.get(tree, date)
+
+            if entry:
+                lista = me.getValue(entry)
+                lt.removeLast(lista)
+
+            if copy != None:
+                lt.addLast(lista, copy)
+
+            copy.pop("time")
+            lt.addLast(lista, date)
+            om.put(tree, date, lista)
+
+            if int(value["sig"]) > int(ans["sig"]):
+                ans = copy
+
+    num = om.size(tree)
+    fir = om.select(tree, 0)
+    last = om.select(tree, int(bins) + 1)
+
+    lista_de_listas = om.values(tree, fir, last)
+    total_dates = om.size(tree)
+    total_events = cont
+
+    count = 0
+    gg = om.valueSet(sismo)
+    print(count)
+    return total_dates, total_events, lista_de_listas, ans
+
+
+
+def tabulate_req_7(lista_de_listas):
+    lista = lt.newList("ARRAY_LIST")
+    for cada_lista in lt.iterator(lista_de_listas):
+        lista2 = lt.newList("ARRAY_LIST")
+        fecha = lt.lastElement(cada_lista)
+        lt.removeLast(cada_lista)
+        size = lt.size(cada_lista)
+
+        lt.addLast(lista2, fecha)
+        lt.addLast(lista2, size)
+
+        tabla = tabulate(lt.iterator(cada_lista),headers = "keys", tablefmt = "grid")
+
+        lt.addLast(lista2, tabla)
+        lt.addLast(lista, lista2)
+
+    return lista
 
 
 def req_8(data_structs):

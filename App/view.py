@@ -108,8 +108,8 @@ def print_req_3(control):
         Función que imprime la solución del Requerimiento 3 en consola
     """
     print("\n=============== Req No, 3 Inputs ===============")
-    mag = float(input("La magnitud mínima del evento: "))
-    depth= float(input("La profundidad máxima del evento: "))
+    mag = float(input("Min magnitude: "))
+    depth= float(input("Max depth: "))
 
     return controller.req_3(control, mag, depth)
 
@@ -154,13 +154,13 @@ def print_req_7(control):
     """
         Función que imprime la solución del Requerimiento 7 en consola
     """
-    print("\n=============== Req No, 3 Inputs ===============")
-    anio = input("El año relevante: ")
-    title = input("El título de la región asociada: ")
-    prop = input("La propiedad de conteo (magnitud, profundidad o significancia): ")
-    bins = input("El número de segmentos o casillas en los que se divide el histograma: ")
+    print("\n=============== Req No, 7 Inputs ===============")
+    year = input("Year: ")
+    title = input("Area of interest: ")
+    prop = input("The property of interest: ")
+    bins = input("The number of bins: ")
 
-    return controller.req_7(control, anio, title, prop, bins)
+    return controller.req_7(control, year, title, prop, bins)
 
 def print_req_8(control):
     """
@@ -245,8 +245,26 @@ if __name__ == "__main__":
             print(tabulate(listas,headers= keys ,tablefmt="grid"))
 
         elif int(inputs) == 4:
-            
-            print_req_3(control)
+            total_mag, total_events, consult_size, data = print_req_3(control)
+            listas = []
+            for datos in lt.iterator(data):
+                uno = lt.getElement(datos, 1)
+                dos = lt.getElement(datos, 2)
+                tres = lt.getElement(datos, 3)
+                lista = []
+                lista.append(uno)
+                lista.append(dos)
+                lista.append(tres)
+                listas.append(lista)
+
+            print("\n=============== Req No. 3 Results ===============")
+            print("Total different dates: " + str(total_mag))
+            print("Total events between dates: " + str(total_events))
+            print("Consult has " + str(total_mag) + " results")
+            print("Consult size: " + str(consult_size) + "Only the first and last '3' results are:")
+
+            keys = ["time", "events", "details"]
+            print(tabulate(listas,headers= keys, tablefmt="grid"))
 
         elif int(inputs) == 5:
             total_dates, total_events,data,delta = print_req_4(control)
